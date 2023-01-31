@@ -1,4 +1,3 @@
-python-dotenv
 streamlit
 python-congress
 deta

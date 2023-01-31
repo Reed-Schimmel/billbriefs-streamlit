@@ -1,6 +1,6 @@
 import streamlit as st
 from congress import Congress
-from dotenv import load_dotenv, dotenv_values
+
 # Config webapp
 st.set_page_config(
     # page_title="Best TA Demo",
@@ -14,15 +14,36 @@ st.set_page_config(
 )
 
 ### Main App Logic
-env_config = dotenv_values(".env")
-PROPUBLICA_API_KEY = env_config["PROPUBLICA_API_KEY"]
-DETA_API_KEY = env_config["DETA_API_KEY"]
-DETA_ID = env_config["DETA_ID"]
+PROPUBLICA_API_KEY = st.secrets["PROPUBLICA_API_KEY"]
+DETA_API_KEY = st.secrets["DETA_API_KEY"]
+DETA_ID = st.secrets["DETA_ID"]
 
 # Chamber
 SENATE = 'senate'
 HOUSE = 'house'
 
+# ProPublica API
+congress = Congress(PROPUBLICA_API_KEY)
 
-st.write("I want to summize the voting records for each member of congress using GPT and ProPublica")
-st.write(env_config)
+
+### Funcs
+@st.cache
+def get_current_senate_members():
+    # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
+    return congress.members.filter(SENATE)[0]["members"]
+
+@st.cache
+def get_current_house_members():
+    # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
+    return congress.members.filter(HOUSE)[0]["members"]
+
+# WEBAPP
+# st.write("I want to summize the voting records for each member of congress using GPT and ProPublica")
+
+st.header("Members")
+st.subheader("Senate")
+senate_members = get_current_senate_members()
+st.write(senate_members)
+st.subheader("House")
+house_members = get_current_house_members()
+st.write(house_members)
