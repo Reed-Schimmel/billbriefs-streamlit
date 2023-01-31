@@ -1,6 +1,7 @@
 import streamlit as st
 from congress import Congress
 from dotenv import load_dotenv, dotenv_values
+
 # Config webapp
 st.set_page_config(
     # page_title="Best TA Demo",
@@ -23,6 +24,15 @@ DETA_ID = env_config["DETA_ID"]
 SENATE = 'senate'
 HOUSE = 'house'
 
+# ProPublica API
+congress = Congress(PROPUBLICA_API_KEY)
+
 
 st.write("I want to summize the voting records for each member of congress using GPT and ProPublica")
 st.write(env_config)
+
+st.header("Members")
+# https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
+senate_members = congress.members.list_chamber(SENATE, 117)
+house_members = congress.members.list_chamber(HOUSE, 117)
+st.write(senate_members)
