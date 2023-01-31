@@ -29,17 +29,21 @@ congress = Congress(PROPUBLICA_API_KEY)
 ### Funcs
 @st.cache
 def get_current_senate_members():
+    # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
     return congress.members.filter(SENATE)[0]["members"]
 
 @st.cache
 def get_current_house_members():
+    # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
     return congress.members.filter(HOUSE)[0]["members"]
 
 # WEBAPP
-st.write("I want to summize the voting records for each member of congress using GPT and ProPublica")
+# st.write("I want to summize the voting records for each member of congress using GPT and ProPublica")
 
 st.header("Members")
-# https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
+st.subheader("Senate")
 senate_members = get_current_senate_members()
+st.write(senate_members)
+st.subheader("House")
 house_members = get_current_house_members()
-st.write(senate_members[0])
+st.write(house_members)
