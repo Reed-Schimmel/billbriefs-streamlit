@@ -10,7 +10,7 @@
 1. `conda create -n [envname] python=3.10`
 1. `conda activate [envname]`
 1. `pip install -r requirements.txt`
-1. Add your API keys to `.streamlit/secrets.toml`
+1. Add your API keys to `.streamlit/secrets.toml`. Create the file if needed.
 
 ## Run
 `streamlit run streamlit_app.py`
