@@ -43,7 +43,11 @@ def get_current_house_members():
 st.header("Members")
 st.subheader("Senate")
 senate_members = get_current_senate_members()
-st.write(senate_members)
+st.write(senate_members[0])
 st.subheader("House")
 house_members = get_current_house_members()
-st.write(house_members)
+st.write(house_members[0])
+
+st.write("""
+For Congressmember: Find all bill they voted on
+""")
