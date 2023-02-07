@@ -2,7 +2,7 @@
 - [Congress API](https://www.propublica.org/datastore/api/propublica-congress-api)
     - [Docs](https://projects.propublica.org/api-docs/congress-api/)
     - [Python Lib](https://github.com/eyeseast/propublica-congress) - [Docs](https://propublica-congress.readthedocs.io/en/latest/)
-
+- [Streamlit Extras](https://github.com/arnaudmiribel/streamlit-extras)
 
 ## Setup
 1. clone this repo

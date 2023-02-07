@@ -48,5 +48,6 @@ STATE_DICT = {
     "WA": "Washington",
     "WV": "West Virginia",
     "WI": "Wisconsin",
-    "WY": "Wyoming"
+    "WY": "Wyoming",
+    # "PR": "Puerto Rico" # DON'T INCLUDE
 }
