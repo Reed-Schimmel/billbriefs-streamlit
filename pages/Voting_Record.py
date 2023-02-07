@@ -14,10 +14,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# If session state is empty, go to home.
+if len(st.session_state) == 0:
+    switch_page("streamlit app")
+elif "selected_member" not in st.session_state:
+    switch_page("streamlit app")
+
 st.title("Voting Record")
 
 if st.button("Go Back"):
     st.session_state["selected_member"] = None
     switch_page("Member_List")
 
+
+############################## HERE YA GO #########################################
 st.write(st.session_state["selected_member"])
