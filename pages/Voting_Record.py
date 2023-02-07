@@ -1,9 +1,5 @@
 import streamlit as st
-from congress import Congress
-from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
-
-from const import STATE_DICT
 
 # Config webapp
 st.set_page_config(
@@ -18,8 +14,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-if "selected_member" not in st.session_state:
+st.title("Voting Record")
+
+if st.button("Go Back"):
     st.session_state["selected_member"] = None
     switch_page("Member_List")
-elif st.session_state["selected_member"] != None:
-    switch_page("Voting_Record")
+
+st.write(st.session_state["selected_member"])
