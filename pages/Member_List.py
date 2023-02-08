@@ -1,9 +1,12 @@
 import streamlit as st
+from typing import List, Tuple
 from congress import Congress
 from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
+from streamlit_searchbox import st_searchbox
 
 from const import STATE_DICT
+from const import MEMBERS
 
 # Config webapp
 st.set_page_config(
@@ -69,6 +72,21 @@ def render_member(member):
 
 
 # WEBAPP
+
+# Work in progress, need to fix errors. 
+def search_person_id(selected_value):
+    id = MEMBERS.get(selected_value, "")
+    def set_this_member():
+        st.session_state["selected_member"] = id
+    if id:
+        set_this_member
+        switch_page("Voting_Record")
+
+selected_value = st_searchbox(
+    search_person_id,
+    key="person_searchbox",
+)
+
 st.title("Members")
 st.markdown("---")
 
