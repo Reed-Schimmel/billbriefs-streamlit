@@ -51,19 +51,3 @@ STATE_DICT = {
     "WY": "Wyoming",
     # "PR": "Puerto Rico" # DON'T INCLUDE
 }
-MEMBERS = {
-    "Tammy Baldwin": "B001230",
-    "John Barrasso": "B001261",
-    "Michael F. Bennet": "B001267",
-    "Richard Blumenthal": "B001277",
-    "Roy Blunt": "B001236",
-    "Cory Booker": "B001288",
-    "Sherrod Brown": "B001135",
-    "Marsha Blackburn": "B001291",
-    "Barbara Boxer": "B000711",
-    "John Boozman": "B001267",
-    "Sherrod Brown": "B001135",
-    "Richard Burr": "B001135",
-    "Maria Cantwell": "C000127"
-    # Need to add all the names or a easier way to store member ID's or remove this and create a function to pull from the already API.
-}
