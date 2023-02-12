@@ -2,4 +2,3 @@ streamlit
 python-congress
 deta
 streamlit-extras
-streamlit-searchbox
