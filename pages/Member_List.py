@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
 
 from const import STATE_DICT
-from const import REVERSE_STATE_DICT
 
 # Config webapp
 st.set_page_config(
@@ -85,17 +84,13 @@ with st.expander("State Senators", True):
     for senator in st.session_state['senate_members']:
         if search_by in senator['first_name'] + " " + senator['last_name']:
             render_member(senator)
-        elif search_by in REVERSE_STATE_DICT[senator['state']]:
+        elif search_by in STATE_DICT.values() and senator["state"] in STATE_DICT.keys() and STATE_DICT[senator["state"]].lower() == search_by.lower():
             render_member(senator)
-        else:
-            st.text("No results found")
 
 st.header("House")
 with st.expander("State Representatives", True):
     for rep in st.session_state['house_members']:
         if search_by in rep['first_name'] + " " + rep['last_name']:
             render_member(rep)
-        elif search_by in REVERSE_STATE_DICT[rep['state']]:
+        elif search_by in STATE_DICT.values() and rep["state"] in STATE_DICT.keys() and STATE_DICT[rep["state"]].lower() == search_by.lower():
             render_member(rep)
-        else:
-            st.text("No results found")
