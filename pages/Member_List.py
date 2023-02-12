@@ -1,5 +1,4 @@
 import streamlit as st
-from typing import List, Tuple
 from congress import Congress
 from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
