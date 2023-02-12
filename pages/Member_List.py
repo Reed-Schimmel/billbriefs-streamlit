@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
 
 from const import STATE_DICT
-from const import MEMBERS
 
 # Config webapp
 st.set_page_config(
