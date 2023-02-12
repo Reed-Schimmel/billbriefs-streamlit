@@ -3,7 +3,7 @@ from typing import List, Tuple
 from congress import Congress
 from datetime import datetime, timedelta
 from streamlit_extras.switch_page_button import switch_page
-from streamlit_searchbox import st_searchbox
+# from streamlit_searchbox import st_searchbox
 
 from const import STATE_DICT
 from const import MEMBERS
@@ -32,7 +32,6 @@ HOUSE = 'house'
 
 # ProPublica API
 congress = Congress(PROPUBLICA_API_KEY)
-
 
 ### Funcs
 @st.cache
@@ -73,31 +72,24 @@ def render_member(member):
 
 # WEBAPP
 
-# Work in progress, need to fix errors. 
-def search_person_id(selected_value):
-    id = MEMBERS.get(selected_value, "")
-    def set_this_member():
-        st.session_state["selected_member"] = id
-    if id:
-        set_this_member
-        switch_page("Voting_Record")
+if 'senate_members' not in st.session_state:
+    st.session_state['senate_members'] = get_current_senate_members()
+if 'house_members' not in st.session_state:
+    st.session_state['house_members'] = get_current_house_members()
 
-selected_value = st_searchbox(
-    search_person_id,
-    key="person_searchbox",
-)
+search_by = st.text_input("Search")
 
 st.title("Members")
 st.markdown("---")
 
 st.header("Senate")
-senate_members = get_current_senate_members()
 with st.expander("State Senators", True):
-    for senator in senate_members:
-        render_member(senator)
+    for senator in st.session_state['senate_members']:
+        if search_by in senator['first_name'] + senator['last_name']:
+            render_member(senator)
 
 st.header("House")
-house_members = get_current_house_members()
 with st.expander("State Representatives", True):
-    for rep in house_members:
-        render_member(rep)
+    for rep in st.session_state['house_members']:
+        if search_by in rep['first_name'] + rep['last_name']:
+            render_member(rep)
