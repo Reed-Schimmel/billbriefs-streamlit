@@ -74,7 +74,7 @@ if 'senate_members' not in st.session_state:
 if 'house_members' not in st.session_state:
     st.session_state['house_members'] = get_current_house_members()
 
-search_by = st.text_input("Search")
+search_by = st.text_input("Search", placeholder="Search by name")
 
 st.title("Members")
 st.markdown("---")
@@ -82,11 +82,11 @@ st.markdown("---")
 st.header("Senate")
 with st.expander("State Senators", True):
     for senator in st.session_state['senate_members']:
-        if search_by in senator['first_name'] + senator['last_name']:
+        if search_by in senator['first_name'] + " " + senator['last_name']:
             render_member(senator)
 
 st.header("House")
 with st.expander("State Representatives", True):
     for rep in st.session_state['house_members']:
-        if search_by in rep['first_name'] + rep['last_name']:
+        if search_by in rep['first_name'] + " " + rep['last_name']:
             render_member(rep)
