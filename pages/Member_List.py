@@ -82,15 +82,15 @@ st.markdown("---")
 st.header("Senate")
 with st.expander("State Senators", True):
     for senator in st.session_state['senate_members']:
-        if search_by in senator['first_name'] + " " + senator['last_name']:
+        if search_by.lower() in (senator['first_name'] + " " + senator['last_name']).lower():
             render_member(senator)
-        elif search_by in STATE_DICT.values() and senator["state"] in STATE_DICT.keys() and STATE_DICT[senator["state"]].lower() == search_by.lower():
+        elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and senator["state"] in STATE_DICT.keys() and STATE_DICT[senator["state"]].lower() == search_by.lower():
             render_member(senator)
 
 st.header("House")
 with st.expander("State Representatives", True):
     for rep in st.session_state['house_members']:
-        if search_by in rep['first_name'] + " " + rep['last_name']:
+        if search_by.lower() in (rep['first_name'] + " " + rep['last_name']).lower():
             render_member(rep)
-        elif search_by in STATE_DICT.values() and rep["state"] in STATE_DICT.keys() and STATE_DICT[rep["state"]].lower() == search_by.lower():
+        elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and rep["state"] in STATE_DICT.keys() and STATE_DICT[rep["state"]].lower() == search_by.lower():
             render_member(rep)
