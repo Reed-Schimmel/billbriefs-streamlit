@@ -31,37 +31,7 @@ if st.button("Go Back"):
     switch_page("Member_List")
 
 ############################## HERE YA GO #########################################
-selected_member = st.session_state["selected_member"]["id"]
 
-rollcall_number = 1
-
-while True:
-    formatted_rollcall_number = str(rollcall_number).zfill(3)
-    url = "https://clerk.house.gov/evs/2023/roll" + formatted_rollcall_number + ".xml"
-    response = requests.get(url)
-    if response.status_code == 404:
-        break
-    xml_string = response.content
-
-    root = ET.fromstring(xml_string)
-
-    congress_num = root.find("./vote-metadata/congress").text
-    rollcall_num = root.find("./vote-metadata/rollcall-num").text
-    legis_num = root.find("./vote-metadata/legis-num")
-    if legis_num is not None:
-        legis_num = legis_num.text
-    vote_question = root.find("./vote-metadata/vote-question").text
-    vote_result = root.find("./vote-metadata/vote-result").text
-
-    vote_data = []
-    for recorded_vote in root.findall("./vote-data/recorded-vote"):
-        id = recorded_vote.find("./legislator").attrib["name-id"]
-        vote = recorded_vote.find("./vote").text
-        if id == selected_member:
-            st.text("Congress: {}  Roll Call: {}  Legislation: {}  Vote Question: {}  Vote Result: {}  Vote: {}".format(congress_num, rollcall_num, legis_num, vote_question, vote_result, vote))
-            break
-
-    rollcall_number += 1
 
 
 
