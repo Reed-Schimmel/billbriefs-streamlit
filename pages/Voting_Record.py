@@ -1,5 +1,5 @@
 import streamlit as st
-import congress
+import requests
 import xml.etree.ElementTree as ET
 from streamlit_extras.switch_page_button import switch_page
 
@@ -30,24 +30,38 @@ if st.button("Go Back"):
     st.session_state["selected_member"] = None
     switch_page("Member_List")
 
-
 ############################## HERE YA GO #########################################
 selected_member = st.session_state["selected_member"]["id"]
 
-tree = ET.parse("roll_call_votes.xml")
-root = tree.getroot()
+rollcall_number = 1
 
-congress_num = root.find("./vote-metadata/congress").text
-legis_num = root.find("./vote-metadata/legis-num").text
-rollcall_num = root.find("./vote-metadata/rollcall-num").text
-
-vote_data = []
-for recorded_vote in root.findall("./vote-data/recorded-vote"):
-    id = recorded_vote.find("./legislator").attrib["name-id"]
-    vote = recorded_vote.find("./vote").text
-    if id == selected_member:
-        st.text("Congress: {}  Legislation: {}  Roll Call: {}  Vote: {}".format(congress_num, legis_num, rollcall_num, vote))
+while True:
+    formatted_rollcall_number = str(rollcall_number).zfill(3)
+    url = "https://clerk.house.gov/evs/2023/roll" + formatted_rollcall_number + ".xml"
+    response = requests.get(url)
+    if response.status_code == 404:
         break
+    xml_string = response.content
+
+    root = ET.fromstring(xml_string)
+
+    congress_num = root.find("./vote-metadata/congress").text
+    rollcall_num = root.find("./vote-metadata/rollcall-num").text
+    legis_num = root.find("./vote-metadata/legis-num")
+    if legis_num is not None:
+        legis_num = legis_num.text
+    vote_question = root.find("./vote-metadata/vote-question").text
+    vote_result = root.find("./vote-metadata/vote-result").text
+
+    vote_data = []
+    for recorded_vote in root.findall("./vote-data/recorded-vote"):
+        id = recorded_vote.find("./legislator").attrib["name-id"]
+        vote = recorded_vote.find("./vote").text
+        if id == selected_member:
+            st.text("Congress: {}  Roll Call: {}  Legislation: {}  Vote Question: {}  Vote Result: {}  Vote: {}".format(congress_num, rollcall_num, legis_num, vote_question, vote_result, vote))
+            break
+
+    rollcall_number += 1
 
 
 
