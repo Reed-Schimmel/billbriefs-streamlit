@@ -30,7 +30,6 @@ HOUSE = 'house'
 # ProPublica API
 congress = Congress(PROPUBLICA_API_KEY)
 
-
 ### Funcs
 @st.cache
 def get_current_senate_members():
@@ -67,19 +66,34 @@ def render_member(member):
     if container.button("Voting Record", key=member["id"], on_click = set_this_member):
         switch_page("Voting_Record")
 
+@st.cache
+def search_members(search_by, member):
+    '''Returns True if search_by is in member's name or state name'''
+    if search_by.lower() in (member['first_name'] + " " + member['last_name']).lower():
+        return True
+    elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and member["state"] in STATE_DICT.keys() and STATE_DICT[member["state"]].lower() == search_by.lower():
+        return True
 
 # WEBAPP
+
+if 'senate_members' not in st.session_state:
+    st.session_state['senate_members'] = get_current_senate_members()
+if 'house_members' not in st.session_state:
+    st.session_state['house_members'] = get_current_house_members()
+
+search_by = st.text_input("Search", placeholder="Search by name or state")
+
 st.title("Members")
 st.markdown("---")
 
 st.header("Senate")
-senate_members = get_current_senate_members()
 with st.expander("State Senators", True):
-    for senator in senate_members:
-        render_member(senator)
+    for senator in st.session_state['senate_members']:
+        if search_members(search_by, senator):
+            render_member(senator)
 
 st.header("House")
-house_members = get_current_house_members()
 with st.expander("State Representatives", True):
-    for rep in house_members:
-        render_member(rep)
+    for rep in st.session_state['house_members']:
+        if search_members(search_by, rep):
+            render_member(rep)
