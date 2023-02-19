@@ -31,7 +31,7 @@ if st.button("Go Back"):
     switch_page("Member_List")
 
 ############################## HERE YA GO #########################################
-
+st.write(st.session_state["selected_member"])
 
 
 
