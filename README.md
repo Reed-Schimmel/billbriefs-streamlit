@@ -16,7 +16,8 @@
 `streamlit run streamlit_app.py`
 
 ## Notes
-- app secrets https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management
+- [Streamalit Secrets Docs](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management)
+- [Deta Base Docs](https://deta.space/docs/en/reference/base/sdk)
 
 ## App Flow for voters
 1. input zipcode
