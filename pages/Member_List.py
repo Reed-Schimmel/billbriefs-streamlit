@@ -31,25 +31,26 @@ HOUSE = 'house'
 congress = Congress(PROPUBLICA_API_KEY)
 
 ### Funcs
-@st.cache
+@st.cache_data
 def get_current_senate_members():
     # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
     return congress.members.filter(SENATE)[0]["members"]
 
-@st.cache
+@st.cache_data
 def get_current_house_members():
     # https://propublica-congress.readthedocs.io/en/latest/api.html#module-congress.members
     all_members = congress.members.filter(HOUSE)[0]["members"]
     # Filter only by 50 states
     return [ member for member in all_members if member["state"] in STATE_DICT.keys() ]
 
-@st.cache(ttl=60*60*24)
+@st.cache_data(ttl=60*60*24)
 def calculate_age(birthdate):
     today = datetime.now()
     birthdate = datetime.strptime(birthdate, '%Y-%m-%d')
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     return age
 
+#@st.cache_data
 def render_member(member):
     def set_this_member():
         st.session_state["selected_member"] = member
@@ -66,7 +67,7 @@ def render_member(member):
     if container.button("Voting Record", key=member["id"], on_click = set_this_member):
         switch_page("Voting_Record")
 
-@st.cache
+@st.cache_data
 def search_members(search_by, member):
     '''Returns True if search_by is in member's name or state name'''
     if search_by.lower() in (member['first_name'] + " " + member['last_name']).lower():
