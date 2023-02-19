@@ -22,6 +22,7 @@ st.set_page_config(
 PROPUBLICA_API_KEY = st.secrets["PROPUBLICA_API_KEY"]
 DETA_API_KEY = st.secrets["DETA_API_KEY"]
 DETA_ID = st.secrets["DETA_ID"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 # Chamber
 SENATE = 'senate'
