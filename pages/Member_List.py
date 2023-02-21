@@ -58,7 +58,10 @@ def render_member(member):
         st.session_state["selected_member"] = member
 
     container = st.container()
-    container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg")
+    if "Representative" in member["title"]:
+        container.image(f"https://clerk.house.gov/content/assets/img/members/{member['id']}.jpg", width=200)
+    else:
+        container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg")
     container.subheader(member["short_title"] + " " + member["first_name"] + " " + member["last_name"])
     container.text("State: " + STATE_DICT[member["state"]])
     if "district" in member:
