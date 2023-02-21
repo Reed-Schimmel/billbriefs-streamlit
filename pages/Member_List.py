@@ -1,6 +1,7 @@
 import streamlit as st
+import requests
 from congress import Congress
-from datetime import datetime, timedelta
+from datetime import datetime
 from streamlit_extras.switch_page_button import switch_page
 
 from const import STATE_DICT
@@ -69,12 +70,44 @@ def render_member(member):
         switch_page("Voting_Record")
 
 @st.cache_data
+def google_geocode_requests(search_address):
+    GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+
+    # Set the API endpoint URL and API key
+    url = 'https://www.googleapis.com/civicinfo/v2/representatives'
+
+    # Define the API parameters, including the address and API key
+    params = {
+        'address': search_address,
+        'key': GOOGLE_API_KEY
+    }
+
+    # Send an HTTP GET request to the API endpoint with the specified parameters
+    response = requests.get(url, params=params)
+
+    # Retrieve the JSON response from the API
+    response_data = response.json()
+    return response_data
+
+@st.cache_data
 def search_members(search_by, member):
-    '''Returns True if search_by is in member's name or state name'''
+    '''Returns True if search_by is in member's name, state name, or address'''
+
+    # Search by name or state
     if search_by.lower() in (member['first_name'] + " " + member['last_name']).lower():
-        return True
+            return True
     elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and member["state"] in STATE_DICT.keys() and STATE_DICT[member["state"]].lower() == search_by.lower():
         return True
+
+    # Search by address
+    else:
+        response_data = google_geocode_requests(search_by)
+        officials = response_data['officials']
+        for official in officials:
+            if (member['first_name'].lower() in official['name'].lower()) and (member['last_name'].lower() in official['name'].lower()):
+                return True
+
+    return False
 
 # WEBAPP
 
@@ -90,12 +123,32 @@ st.markdown("---")
 
 st.header("Senate")
 with st.expander("State Senators", True):
+    senators_by_state = {}
     for senator in st.session_state['senate_members']:
         if search_members(search_by, senator):
+            state = senator['state']
+            if state in STATE_DICT:
+                full_state_name = STATE_DICT[state]
+                if full_state_name not in senators_by_state:
+                    senators_by_state[full_state_name] = []
+                senators_by_state[full_state_name].append(senator)
+
+    for state, senators in sorted(senators_by_state.items()):
+        for senator in senators:
             render_member(senator)
 
 st.header("House")
 with st.expander("State Representatives", True):
+    reps_by_state = {}
     for rep in st.session_state['house_members']:
         if search_members(search_by, rep):
+            state = rep['state']
+            if state in STATE_DICT:
+                full_state_name = STATE_DICT[state]
+                if full_state_name not in reps_by_state:
+                    reps_by_state[full_state_name] = []
+                reps_by_state[full_state_name].append(rep)
+
+    for state, reps in sorted(reps_by_state.items()):
+        for rep in reps:
             render_member(rep)

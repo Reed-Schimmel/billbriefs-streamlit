@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 @st.cache_data
-def google_zipcode_requests(search_zip):
+def google_geocode_requests(search_address):
     GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
     # Set the API endpoint URL and API key
@@ -25,7 +25,7 @@ def google_zipcode_requests(search_zip):
 
     # Define the API parameters, including the address and API key
     params = {
-        'address': search_zip,
+        'address': search_address,
         'key': GOOGLE_API_KEY
     }
 
@@ -36,14 +36,12 @@ def google_zipcode_requests(search_zip):
     response_data = response.json()
     return response_data
 
-# Search the address for which you want to retrieve representative information
-search_zip = st.text_input("Search", placeholder="Search by zipcode")
-zip_code_regex = r'\b\d{5}(?:[-\s]\d{4})?\b'
-match = re.search(zip_code_regex, search_zip)
-
-if match:
-    response_data = google_zipcode_requests(search_zip)
-
+address_regex = r'\b\d+\s+\w+\s+\w+\b'
+search_address = st.text_input("Search", placeholder="Search by address")
+if re.search(address_regex, search_address):
+    # Use the coordinates to look up the representatives for that location
+    response_data = google_geocode_requests(search_address)
+    st.write(response_data)
     # Extract the relevant representative information from the response
     officials = response_data['officials']
     offices = response_data['offices']
@@ -52,6 +50,8 @@ if match:
     for office in offices:
         for index in office['officialIndices']:
             official = officials[index]
-            st.text('Name: %s, Title: %s' % (official['name'], office['name']))
+            title = office['name']
+            if "U.S. Senator" in title or "U.S. Representative" in title:
+                st.text('Name: %s, Title: %s' % (official['name'], title))
 
 
