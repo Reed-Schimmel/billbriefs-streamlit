@@ -116,7 +116,7 @@ if 'senate_members' not in st.session_state:
 if 'house_members' not in st.session_state:
     st.session_state['house_members'] = get_current_house_members()
 
-search_by = st.text_input("Search", placeholder="Search by name or state")
+search_by = st.text_input("**Find your Elected Officials**", placeholder="Search by name, state, or address.")
 
 st.title("Members")
 st.markdown("---")
