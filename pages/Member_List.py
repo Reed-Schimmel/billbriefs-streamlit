@@ -116,39 +116,46 @@ if 'senate_members' not in st.session_state:
 if 'house_members' not in st.session_state:
     st.session_state['house_members'] = get_current_house_members()
 
-search_by = st.text_input("**Find your Elected Officials**", placeholder="Search by name, state, or address.")
-
-st.title("Members")
+st.markdown("<h1 style='text-align: center;'>Welcome to BillBriefs!</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
-st.header("Senate")
-with st.expander("State Senators", True):
-    senators_by_state = {}
-    for senator in st.session_state['senate_members']:
-        if search_members(search_by, senator):
-            state = senator['state']
-            if state in STATE_DICT:
-                full_state_name = STATE_DICT[state]
-                if full_state_name not in senators_by_state:
-                    senators_by_state[full_state_name] = []
-                senators_by_state[full_state_name].append(senator)
+search_by = st.text_input("**Find your Elected Officials**", placeholder="Search by name, state, or address.")
 
-    for state, senators in sorted(senators_by_state.items()):
-        for senator in senators:
-            render_member(senator)
+st.markdown("<h2 style='text-align: center;'>Members</h2>", unsafe_allow_html=True)
+st.markdown("---")
 
-st.header("House")
-with st.expander("State Representatives", True):
-    reps_by_state = {}
-    for rep in st.session_state['house_members']:
-        if search_members(search_by, rep):
-            state = rep['state']
-            if state in STATE_DICT:
-                full_state_name = STATE_DICT[state]
-                if full_state_name not in reps_by_state:
-                    reps_by_state[full_state_name] = []
-                reps_by_state[full_state_name].append(rep)
+col1, col2, = st.columns(2)
 
-    for state, reps in sorted(reps_by_state.items()):
-        for rep in reps:
-            render_member(rep)
+with col1:
+    st.markdown("<h3 style='text-align: center;'>Senate</h3>", unsafe_allow_html=True)
+    with st.expander("State Senators", True):
+        senators_by_state = {}
+        for senator in st.session_state['senate_members']:
+            if search_members(search_by, senator):
+                state = senator['state']
+                if state in STATE_DICT:
+                    full_state_name = STATE_DICT[state]
+                    if full_state_name not in senators_by_state:
+                        senators_by_state[full_state_name] = []
+                    senators_by_state[full_state_name].append(senator)
+
+        for state, senators in sorted(senators_by_state.items()):
+            for senator in senators:
+                render_member(senator)
+
+with col2:
+    st.markdown("<h3 style='text-align: center;'>House</h3>", unsafe_allow_html=True)
+    with st.expander("State Representatives", True):
+        reps_by_state = {}
+        for rep in st.session_state['house_members']:
+            if search_members(search_by, rep):
+                state = rep['state']
+                if state in STATE_DICT:
+                    full_state_name = STATE_DICT[state]
+                    if full_state_name not in reps_by_state:
+                        reps_by_state[full_state_name] = []
+                    reps_by_state[full_state_name].append(rep)
+
+        for state, reps in sorted(reps_by_state.items()):
+            for rep in reps:
+                render_member(rep)
