@@ -29,6 +29,6 @@
 
 Call it elective review
 
-Future ideas: 
+# Future ideas
 Some members might come back to challenge the current person. Take their past voting records and rank it against the user.
 Allow new candidates running for election to display how they would've voted for past bills.
