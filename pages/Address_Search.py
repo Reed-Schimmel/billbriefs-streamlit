@@ -37,7 +37,7 @@ def google_geocode_requests(search_address):
     return response_data
 
 address_regex = r'\b\d+\s+\w+\s+\w+\b'
-search_address = st.text_input("Search", placeholder="Search by address")
+search_address = st.text_input("Search", placeholder="Search by address.")
 if re.search(address_regex, search_address):
     # Use the coordinates to look up the representatives for that location
     response_data = google_geocode_requests(search_address)

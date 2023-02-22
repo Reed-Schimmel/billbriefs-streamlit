@@ -58,9 +58,12 @@ def render_member(member):
         st.session_state["selected_member"] = member
 
     container = st.container()
-    if "Representative" in member["title"]:
+    # Temporary fix for missing image for Senator Pete Ricketts
+    if member["id"] == "R000618":
+        container.image("https://upload.wikimedia.org/wikipedia/commons/b/bd/Sen._Pete_Ricketts_official_portrait%2C_118th_Congress.jpg", width=200)
+    elif "Representative" in member["title"]:
         container.image(f"https://clerk.house.gov/content/assets/img/members/{member['id']}.jpg", width=200)
-    else:
+    elif "Senator" in member["title"]:
         container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg")
     container.subheader(member["short_title"] + " " + member["first_name"] + " " + member["last_name"])
     container.text("State: " + STATE_DICT[member["state"]])
