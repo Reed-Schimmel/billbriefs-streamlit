@@ -98,14 +98,13 @@ def search_members(search_by, member):
 
     # Search by name or state
     if search_by.lower() in (member['first_name'] + " " + member['last_name']).lower():
-            return True
+        return True
     elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and member["state"] in STATE_DICT.keys() and STATE_DICT[member["state"]].lower() == search_by.lower():
         return True
 
-    # Search by address
-    else:
-        response_data = google_geocode_requests(search_by)
-        officials = response_data['officials']
+    response_data = google_geocode_requests(search_by)
+    officials = response_data.get('officials', [])
+    if officials:
         for official in officials:
             if (member['first_name'].lower() in official['name'].lower()) and (member['last_name'].lower() in official['name'].lower()):
                 return True
@@ -160,5 +159,6 @@ with col2:
                     reps_by_state[full_state_name].append(rep)
 
         for state, reps in sorted(reps_by_state.items()):
-            for rep in reps:
+            sorted_reps = sorted(reps, key=lambda x: (int(x['district']) if 'district' in x and x['district'].isdigit() else 0))
+            for rep in sorted_reps:
                 render_member(rep)
