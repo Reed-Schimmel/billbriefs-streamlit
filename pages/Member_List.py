@@ -66,7 +66,7 @@ def render_member(member):
     elif "Senator" in member["title"]:
         container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg")
     container.subheader(member["short_title"] + " " + member["first_name"] + " " + member["last_name"])
-    container.text("State: " + STATE_DICT[member["state"]])
+    #container.text("State: " + STATE_DICT[member["state"]])
     if "district" in member:
         container.text("District: " + member["district"])
     container.text(f"Age: {calculate_age(member['date_of_birth'])}")
@@ -129,39 +129,37 @@ search_by = st.text_input("**Find your Elected Officials**", placeholder="Search
 st.markdown("<h2 style='text-align: center;'>Members</h2>", unsafe_allow_html=True)
 st.markdown("---")
 
-col1, col2, = st.columns(2)
+senators_by_state = {}
+reps_by_state = {}
 
-with col1:
-    st.markdown("<h3 style='text-align: center;'>Senate</h3>", unsafe_allow_html=True)
-    with st.expander("State Senators", True):
-        senators_by_state = {}
-        for senator in st.session_state['senate_members']:
-            if search_members(search_by, senator):
-                state = senator['state']
-                if state in STATE_DICT:
-                    full_state_name = STATE_DICT[state]
-                    if full_state_name not in senators_by_state:
-                        senators_by_state[full_state_name] = []
-                    senators_by_state[full_state_name].append(senator)
+for senator in st.session_state['senate_members']:
+    if search_members(search_by, senator):
+        state = senator['state']
+        if state in STATE_DICT:
+            full_state_name = STATE_DICT[state]
+            if full_state_name not in senators_by_state:
+                senators_by_state[full_state_name] = []
+            senators_by_state[full_state_name].append(senator)
 
-        for state, senators in sorted(senators_by_state.items()):
-            for senator in senators:
+for rep in st.session_state['house_members']:
+    if search_members(search_by, rep):
+        state = rep['state']
+        if state in STATE_DICT:
+            full_state_name = STATE_DICT[state]
+            if full_state_name not in reps_by_state:
+                reps_by_state[full_state_name] = []
+            reps_by_state[full_state_name].append(rep)
+
+for state in sorted(set(senators_by_state.keys()) | set(reps_by_state.keys())):
+    with st.expander(f"**{state}**", True):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("<h3 style='text-align: left;'>Senators</h3>", unsafe_allow_html=True)
+            for senator in senators_by_state.get(state, []):
                 render_member(senator)
-
-with col2:
-    st.markdown("<h3 style='text-align: center;'>House</h3>", unsafe_allow_html=True)
-    with st.expander("State Representatives", True):
-        reps_by_state = {}
-        for rep in st.session_state['house_members']:
-            if search_members(search_by, rep):
-                state = rep['state']
-                if state in STATE_DICT:
-                    full_state_name = STATE_DICT[state]
-                    if full_state_name not in reps_by_state:
-                        reps_by_state[full_state_name] = []
-                    reps_by_state[full_state_name].append(rep)
-
-        for state, reps in sorted(reps_by_state.items()):
+        with col2:
+            st.markdown("<h3 style='text-align: left;'>Representatives</h3>", unsafe_allow_html=True)
+            reps = reps_by_state.get(state, [])
             sorted_reps = sorted(reps, key=lambda x: (int(x['district']) if 'district' in x and x['district'].isdigit() else 0))
             for rep in sorted_reps:
                 render_member(rep)
