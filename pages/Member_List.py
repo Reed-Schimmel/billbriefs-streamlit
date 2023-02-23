@@ -52,7 +52,7 @@ def calculate_age(birthdate):
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     return age
 
-#@st.cache_data
+#st.cache_data
 def render_member(member):
     def set_this_member():
         st.session_state["selected_member"] = member
@@ -64,7 +64,7 @@ def render_member(member):
     elif "Representative" in member["title"]:
         container.image(f"https://clerk.house.gov/content/assets/img/members/{member['id']}.jpg", width=200)
     elif "Senator" in member["title"]:
-        container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg")
+        container.image(f"https://www.congress.gov/img/member/{member['id'].lower()}_200.jpg", width=200)
     container.subheader(member["short_title"] + " " + member["first_name"] + " " + member["last_name"])
     #container.text("State: " + STATE_DICT[member["state"]])
     if "district" in member:
@@ -124,6 +124,7 @@ if 'house_members' not in st.session_state:
 st.markdown("<h1 style='text-align: center;'>Welcome to BillBriefs!</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
+#Use USPS API to autofilll address or suggest address
 search_by = st.text_input("**Find your Elected Officials**", placeholder="Search by name, state, or address.")
 
 st.markdown("<h2 style='text-align: center;'>Members</h2>", unsafe_allow_html=True)
@@ -132,6 +133,8 @@ st.markdown("---")
 senators_by_state = {}
 reps_by_state = {}
 
+
+# Loop for appending senators in session_state to senators_by_state (Sorted by State)
 for senator in st.session_state['senate_members']:
     if search_members(search_by, senator):
         state = senator['state']
@@ -141,6 +144,7 @@ for senator in st.session_state['senate_members']:
                 senators_by_state[full_state_name] = []
             senators_by_state[full_state_name].append(senator)
 
+# Loop for appending representatives in session_state to reps_by_state (Sorted by State)
 for rep in st.session_state['house_members']:
     if search_members(search_by, rep):
         state = rep['state']
@@ -150,16 +154,41 @@ for rep in st.session_state['house_members']:
                 reps_by_state[full_state_name] = []
             reps_by_state[full_state_name].append(rep)
 
+# Loop for rendering senators and representatives by state
 for state in sorted(set(senators_by_state.keys()) | set(reps_by_state.keys())):
     with st.expander(f"**{state}**", True):
+        # Sets senators equal to senators_by_state for each state
+        senators = senators_by_state.get(state, [])
+        # Creates two columns for seantors and representatives
         col1, col2 = st.columns(2)
+        # If senator 1 exists, render senator 1 in Column 1
         with col1:
-            st.markdown("<h3 style='text-align: left;'>Senators</h3>", unsafe_allow_html=True)
-            for senator in senators_by_state.get(state, []):
-                render_member(senator)
+            if len(senators) > 0:
+                render_member(senators[0])
+        # If senator 2 exists, render senator 2 in Column 2
         with col2:
-            st.markdown("<h3 style='text-align: left;'>Representatives</h3>", unsafe_allow_html=True)
-            reps = reps_by_state.get(state, [])
-            sorted_reps = sorted(reps, key=lambda x: (int(x['district']) if 'district' in x and x['district'].isdigit() else 0))
-            for rep in sorted_reps:
-                render_member(rep)
+            if len(senators) > 1:
+                render_member(senators[1])
+        # Sets representatives equal to reps_by_state for each state
+        reps = reps_by_state.get(state, [])
+        # Sorts representatives by accessnding district number
+        sorted_reps = sorted(reps, key=lambda x: (int(x['district']) if 'district' in x and x['district'].isdigit() else 0, x.get('at_large')))
+        # Loops through sorted representatives and renders them in alternating columns
+        for i, rep in enumerate(sorted_reps):
+            # Checks if district is a number
+            if 'district' in rep and rep['district'].isdigit():
+                # If district is even, render in Column 1
+                if i % 2 == 0:
+                    with col1:
+                        render_member(rep)
+                # If district is odd, render in Column 2
+                else:
+                    with col2:
+                        render_member(rep)
+            # If district is not a number, render in Column 1
+            else:
+                with col1:
+                    render_member(rep)
+                
+
+
