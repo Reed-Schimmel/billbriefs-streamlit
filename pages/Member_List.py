@@ -72,6 +72,8 @@ def render_member(member):
     container.text(f"Age: {calculate_age(member['date_of_birth'])}")
     if "next_election" in member:
         container.text("Next Election: " + member["next_election"])
+    else:
+        container.text("Next Election: N/A")
     if container.button("Voting Record", key=member["id"], on_click = set_this_member):
         switch_page("Voting_Record")
 
