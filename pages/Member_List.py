@@ -52,7 +52,7 @@ def calculate_age(birthdate):
     age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
     return age
 
-#st.cache_data
+#@st.cache_data
 def render_member(member):
     def set_this_member():
         st.session_state["selected_member"] = member
