@@ -21,13 +21,15 @@
 - [Deta Base Docs](https://deta.space/docs/en/reference/base/sdk)
 
 ## App Flow for voters
-1. input zipcode
-1. app get's applicable members
-1. app get all bills during member tenor
-1. GPT summarizes all bills to 1 liner
-1. user swipes on one-liners (support, oppose, or skip)
-1. app shows the alignment of the voter with members up for re-election
+1. User inputs address
+1. App gets applicable members
+1. App gets all bills during member tenor
+1. GPT summarizes all bills to 1 liners
+1. User swipes on one-liners (support, oppose, or skip)
+1. App shows the alignment of the voter with members up for re-election
 
 Call it elective review
 
-Future ideas: some members might be coming back to challenge the current person. Take their past voting records. Still no idea how to handle complete noobs.
+Future ideas:<br/>
+Some members might come back to challenge the current person. Take their past voting records and rank it against the user.<br/>
+Allow new candidates running for election to display how they would've voted for past bills.
