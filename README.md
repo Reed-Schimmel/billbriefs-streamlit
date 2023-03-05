@@ -4,7 +4,8 @@
     - [Python Lib](https://github.com/eyeseast/propublica-congress) - [Docs](https://propublica-congress.readthedocs.io/en/latest/)
 - [Google Civic Information API](https://developers.google.com/civic-information/docs/v2)
 - [Streamlit Extras](https://github.com/arnaudmiribel/streamlit-extras)
-
+- https://api.congress.gov/
+- https://github.com/unitedstates/congress
 ## Setup
 1. clone this repo
 1. cd in dir
