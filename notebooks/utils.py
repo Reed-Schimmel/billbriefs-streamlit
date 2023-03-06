@@ -19,3 +19,15 @@ class RenderJSON(object):
         document.getElementById('%s').appendChild(renderjson(%s))
         });
         """ % (self.uuid, self.json_str), raw=True)
+
+
+def fetch_all_items(db):
+    res = db.fetch()
+    all_items = res.items
+
+    # fetch until last is 'None'
+    while res.last:
+        res = db.fetch(last=res.last)
+        all_items += res.items
+
+    return all_items
