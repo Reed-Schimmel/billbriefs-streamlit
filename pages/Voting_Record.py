@@ -31,5 +31,15 @@ if st.button("Go Back"):
 ############################## HERE YA GO #########################################
 st.write(st.session_state["selected_member"])
 
+'''
+Build 
+
+- bills:
+    - bill_id: {
+        <results_value>: []
+    }
+
+
+'''
 
 
