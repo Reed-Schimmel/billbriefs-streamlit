@@ -34,9 +34,10 @@ if st.button("Go Back"):
     switch_page("Member_List")
 
 ############################## HERE YA GO #########################################
-st.subheader("Voting Positions on Bills that passed.")
-
 st.write(st.session_state["selected_member"])
+
+st.subheader("All Voting Positions")
+
 chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
 all_voting_positions = build_voting_records(chamber, datetime(2022, 5, 1, 0, 0, 0))
 st.write(all_voting_positions[st.session_state["selected_member"]['id']])
