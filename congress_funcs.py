@@ -3,7 +3,7 @@ import streamlit as st
 from congress import Congress
 from datetime import datetime, timedelta
 
-@st.cache_resource#(ttl=60*60)
+@st.cache_resource(ttl=60*60) # Reconnect every 60 minutes
 def get_congress_api():
     return Congress(st.secrets["PROPUBLICA_API_KEY"])
 

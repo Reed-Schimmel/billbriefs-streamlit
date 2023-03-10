@@ -52,3 +52,7 @@ STATE_DICT = {
     # "PR": "Puerto Rico" # DON'T INCLUDE
 }
 
+# Chambers
+SENATE = 'senate'
+HOUSE  = 'house'
+BOTH   = 'both'
