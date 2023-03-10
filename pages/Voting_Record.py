@@ -4,7 +4,7 @@ from streamlit_extras.switch_page_button import switch_page
 
 from datetime import datetime#, timedelta
 
-from congress_funcs import build_voting_records, get_bill, get_bill_summaries_official
+from congress_funcs import build_voting_records, get_bill, get_bill_summaries_official, validate_bill_id
 from const import HOUSE, SENATE
 
 # Config webapp
@@ -51,7 +51,7 @@ member_voting_positions = all_voting_positions[st.session_state["selected_member
 
 with st.expander("Positions"):
     result_filter = st.selectbox("Vote Result", member_voting_positions.keys())
-    selected_positions = member_voting_positions[result_filter]
+    selected_positions = [vp for vp in member_voting_positions[result_filter] if validate_bill_id(vp['bill_id'])]
     show_cols = st.multiselect("Render Columns", selected_positions[0].keys(), default=selected_positions[0].keys())
     df = pd.DataFrame(selected_positions)
     df = df.sort_values(['bill_id', 'date'])
