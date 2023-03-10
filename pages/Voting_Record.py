@@ -19,7 +19,6 @@ st.set_page_config(
     # },
     initial_sidebar_state="collapsed"
 )
-st.title("TODO: remove adjourn-118")
 PROPUBLICA_API_KEY = st.secrets["PROPUBLICA_API_KEY"]
 
 # If session state is empty, go to home.
