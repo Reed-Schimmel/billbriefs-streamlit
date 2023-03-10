@@ -35,7 +35,13 @@ if st.button("Go Back"):
 
 ############################## HERE YA GO #########################################
 st.write(st.session_state["selected_member"])
+'''
+Now what I must do is filter by positions that passed.
+Then by actual bills (not all votes are on bills).
+Then grab the summary or title/short title for each bill (hopefully already cached)
+I will display a list of "date, bill_id, position" then expand for text.
 
+'''
 st.subheader("All Voting Positions")
 
 chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
