@@ -1,3 +1,6 @@
+import re
+import requests
+
 import streamlit as st
 
 from congress import Congress
@@ -98,3 +101,29 @@ def build_voting_records(chamber, from_dt, to_dt = datetime.today()):
     all_votes = get_votes_between(chamber, from_dt, to_dt)
     voting_positions_by_member = process_votes_to_member_positions(all_votes)
     return voting_positions_by_member
+
+@st.cache_data
+def get_bill(bill_id, type=None):
+    '''bill_id as returned by ProPublica ex. "hr1123-118"'''
+    bill, congress = bill_id.split('-')
+    return get_congress_api().bills.get(bill, congress)
+
+@st.cache_data
+def get_bill_summaries_official(bill_id):
+    '''Takes ProPublica bill_id ex "sres21-118"
+    https://api.congress.gov/#/bill/bill_summaries
+    '''
+    CONGRESS_API_KEY = st.secrets["CONGRESS_API_KEY"]
+    BILL_TYPES = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres']
+
+    bill, congress = bill_id.split('-')
+    bill_type, bill_n = re.split('(\d+)', bill)[:2]
+    assert(bill_type in BILL_TYPES)
+    
+    url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/summaries?api_key={CONGRESS_API_KEY}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        json_data = response.json()
+    else:
+        print("Error retrieving bill summaries. Status code:", response.status_code)
+    return json_data

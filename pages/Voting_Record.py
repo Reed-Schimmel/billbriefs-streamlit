@@ -1,9 +1,10 @@
+import pandas as pd
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
 from datetime import datetime#, timedelta
 
-from congress_funcs import build_voting_records
+from congress_funcs import build_voting_records, get_bill, get_bill_summaries_official
 from const import HOUSE, SENATE
 
 # Config webapp
@@ -42,9 +43,48 @@ Then grab the summary or title/short title for each bill (hopefully already cach
 I will display a list of "date, bill_id, position" then expand for text.
 
 '''
-st.subheader("All Voting Positions")
+st.subheader("Voting Positions by vote result")
 
 chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
 all_voting_positions = build_voting_records(chamber, datetime(2022, 5, 1, 0, 0, 0))
-st.write(all_voting_positions[st.session_state["selected_member"]['id']])
+member_voting_positions = all_voting_positions[st.session_state["selected_member"]['id']]
 
+with st.expander("Positions"):
+    result_filter = st.selectbox("Vote Result", member_voting_positions.keys())
+    selected_positions = member_voting_positions[result_filter]
+    show_cols = st.multiselect("Render Columns", selected_positions[0].keys(), default=selected_positions[0].keys())
+    df = pd.DataFrame(selected_positions)
+    st.table(df[show_cols])
+
+###################
+
+
+st.header("Bill Summary")
+# st.write(df['bill_id'].unique())
+bill_id = st.selectbox('bill_id', df['bill_id'].unique())
+
+st.subheader("ProPub details")
+bill_deets = get_bill(bill_id)
+text_fields = ["title","short_title","summary","summary_short",]
+for field in text_fields:
+    st.text(field)
+    st.write(bill_deets[field])
+
+st.subheader("Official details")
+off_deets = get_bill_summaries_official(bill_id)
+st.write(off_deets)
+
+
+
+
+
+# {
+# "bill_id":"hr1123-118"
+# "date":"2023-03-07"
+# "time":"14:16:00"
+# "vote_position":"Yes"
+# "chamber":"House"
+# "rollcall_num":133
+# "session":1
+# "congress":118
+# }
