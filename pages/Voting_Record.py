@@ -19,7 +19,7 @@ st.set_page_config(
     # },
     initial_sidebar_state="collapsed"
 )
-
+st.title("TODO: remove adjourn-118")
 PROPUBLICA_API_KEY = st.secrets["PROPUBLICA_API_KEY"]
 
 # If session state is empty, go to home.
@@ -54,6 +54,7 @@ with st.expander("Positions"):
     selected_positions = member_voting_positions[result_filter]
     show_cols = st.multiselect("Render Columns", selected_positions[0].keys(), default=selected_positions[0].keys())
     df = pd.DataFrame(selected_positions)
+    df = df.sort_values(['bill_id', 'date'])
     st.table(df[show_cols])
 
 ###################
@@ -63,16 +64,22 @@ st.header("Bill Summary")
 # st.write(df['bill_id'].unique())
 bill_id = st.selectbox('bill_id', df['bill_id'].unique())
 
+#validate bill_id, must have the form <bill_type><bill_number>-<congress_number>
+
+
 st.subheader("ProPub details")
 bill_deets = get_bill(bill_id)
-text_fields = ["title","short_title","summary","summary_short",]
-for field in text_fields:
-    st.text(field)
-    st.write(bill_deets[field])
+if bill_deets is not None:
+    text_fields = ["title","short_title","summary","summary_short",]
+    for field in text_fields:
+        st.text(field)
+        st.write(bill_deets[field])
 
 st.subheader("Official details")
 off_deets = get_bill_summaries_official(bill_id)
-st.write(off_deets)
+if off_deets is not None:
+    # st.write(off_deets)
+    st.write(off_deets['summaries'][0]['text'])
 
 
 

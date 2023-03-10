@@ -6,6 +6,14 @@ import streamlit as st
 from congress import Congress
 from datetime import datetime, timedelta
 
+BILL_TYPES = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres']
+
+def validate_bill_id(bill_id=''):
+    '''Takes ProPublica bill_id ex "sres21-118'''
+    pattern = r'^(hr|s|hjres|sjres|hconres|sconres|hres|sres)(\d+)-(\d+)$'
+    return bool(re.match(pattern, bill_id))
+
+
 @st.cache_resource(ttl=60*60) # Reconnect every 60 minutes
 def get_congress_api():
     return Congress(st.secrets["PROPUBLICA_API_KEY"])
@@ -105,6 +113,9 @@ def build_voting_records(chamber, from_dt, to_dt = datetime.today()):
 @st.cache_data
 def get_bill(bill_id, type=None):
     '''bill_id as returned by ProPublica ex. "hr1123-118"'''
+    if not validate_bill_id(bill_id):
+        return None
+
     bill, congress = bill_id.split('-')
     return get_congress_api().bills.get(bill, congress)
 
@@ -113,13 +124,17 @@ def get_bill_summaries_official(bill_id):
     '''Takes ProPublica bill_id ex "sres21-118"
     https://api.congress.gov/#/bill/bill_summaries
     '''
+    if not validate_bill_id(bill_id):
+        return None
+
     CONGRESS_API_KEY = st.secrets["CONGRESS_API_KEY"]
-    BILL_TYPES = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres']
 
     bill, congress = bill_id.split('-')
     bill_type, bill_n = re.split('(\d+)', bill)[:2]
-    assert(bill_type in BILL_TYPES)
-    
+    # if bill_type not in BILL_TYPES:
+    #     return None
+    # # assert(bill_type in BILL_TYPES)
+
     url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/summaries?api_key={CONGRESS_API_KEY}"
     response = requests.get(url)
     if response.status_code == 200:
