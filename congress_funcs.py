@@ -131,9 +131,6 @@ def get_bill_summaries_official(bill_id):
 
     bill, congress = bill_id.split('-')
     bill_type, bill_n = re.split('(\d+)', bill)[:2]
-    # if bill_type not in BILL_TYPES:
-    #     return None
-    # # assert(bill_type in BILL_TYPES)
 
     url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/summaries?api_key={CONGRESS_API_KEY}"
     response = requests.get(url)
