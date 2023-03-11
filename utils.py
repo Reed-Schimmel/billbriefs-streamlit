@@ -21,4 +21,7 @@ def html_to_structured_text(html_string):
                 index = str(len(index) + 1)
                 structured_text += f'{index}. {li.text}\n'
 
+    if structured_text == '':
+        return html_string
+        
     return structured_text
