@@ -34,3 +34,7 @@ Call it elective review
 Future ideas:<br/>
 Some members might come back to challenge the current person. Take their past voting records and rank it against the user.<br/>
 Allow new candidates running for election to display how they would've voted for past bills.
+
+# Don't forget
+just like a download bill summaries and make them pretty, do that with full bill text.
+This will need to happen when we summarize entire bills ourselves.
