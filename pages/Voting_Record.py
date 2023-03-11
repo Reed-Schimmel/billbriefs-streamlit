@@ -47,7 +47,7 @@ with st.expander("Member JSON", expanded=False):
 st.subheader("Voting Positions by vote result")
 
 chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
-all_voting_positions = build_voting_records(chamber, datetime(2022, 5, 1, 0, 0, 0))
+all_voting_positions = build_voting_records(chamber, datetime(2020, 1, 1, 0, 0, 0))
 member_voting_positions = all_voting_positions[st.session_state["selected_member"]['id']]
 
 with st.expander("Positions"):
@@ -98,7 +98,11 @@ if len(selected_positions) > 0:
         st.subheader("Raw text")
         st.write(html_string)
 
-
+st.markdown('---')
+import json
+if st.button("Save to file"):
+    with open(f'{chamber}_all_voting_positions_{df["date"].min()}_{df["date"].max()}.json', 'w') as f:
+        json.dump(all_voting_positions, f)
 
 # {
 # "bill_id":"hr1123-118"
