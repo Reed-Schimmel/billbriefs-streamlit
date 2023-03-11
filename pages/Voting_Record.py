@@ -52,46 +52,51 @@ member_voting_positions = all_voting_positions[st.session_state["selected_member
 
 with st.expander("Positions"):
     result_filter = st.selectbox("Vote Result", member_voting_positions.keys())
+    # filter out invalid bill_ids for things like adjournment and None
     selected_positions = [vp for vp in member_voting_positions[result_filter] if validate_bill_id(vp['bill_id'])]
-    show_cols = st.multiselect("Render Columns", selected_positions[0].keys(), default=selected_positions[0].keys())
-    df = pd.DataFrame(selected_positions)
-    df = df.sort_values(['bill_id', 'date'])
-    st.table(df[show_cols])
+    # selected_positions = member_voting_positions[result_filter]
+    # st.write(type(selected_positions[0]['bill_id'])) # for debug
+    if len(selected_positions) > 0:
+        show_cols = st.multiselect("Render Columns", selected_positions[0].keys(), default=selected_positions[0].keys())
+        df = pd.DataFrame(selected_positions)
+        df = df.sort_values(['bill_id', 'date'])
+        st.table(df[show_cols])
 
 ###################
+if len(selected_positions) > 0:
 
-st.header("Bill Summary")
-# st.write(df['bill_id'].unique())
-bill_id = st.selectbox('bill_id', df['bill_id'].unique())
+    st.header("Bill Summary")
+    # st.write(df['bill_id'].unique())
+    bill_id = st.selectbox('bill_id', df['bill_id'].unique())
 
-#validate bill_id, must have the form <bill_type><bill_number>-<congress_number>
+    #validate bill_id, must have the form <bill_type><bill_number>-<congress_number>
 
-with st.expander("ProPub details", expanded=False):
-    st.subheader("ProPub details")
-    bill_deets = get_bill(bill_id)
-    if bill_deets is not None:
-        text_fields = ["title","short_title","summary","summary_short",]
-        for field in text_fields:
-            st.text(field)
-            st.write(bill_deets[field])
+    with st.expander("ProPub details", expanded=False):
+        st.subheader("ProPub details")
+        bill_deets = get_bill(bill_id)
+        if bill_deets is not None:
+            text_fields = ["title","short_title","summary","summary_short",]
+            for field in text_fields:
+                st.subheader(field)
+                st.write(bill_deets[field])
 
-st.subheader("Official details")
-off_deets = get_bill_summaries_official(bill_id)
-if len(off_deets['summaries']) > 1:
-    st.warning("multiple summaries")
-    with st.expander("Raw summaries list", expanded=False):
-        st.write(off_deets['summaries'])
-        # TODO: select by actionDesc or by actionDate(max)?
+    st.subheader("Official details")
+    off_deets = get_bill_summaries_official(bill_id)
+    if len(off_deets['summaries']) > 1:
+        st.warning("multiple summaries")
+        with st.expander("Raw summaries list", expanded=False):
+            st.write(off_deets['summaries'])
+            # TODO: select by actionDesc or by actionDate(max)?
 
-pretty_col, raw_col = st.columns(2)
+    pretty_col, raw_col = st.columns(2)
 
-with pretty_col:
-    st.subheader("Pretty text")
-    html_string = off_deets['summaries'][0]['text']
-    st.write(html_to_structured_text(html_string))
-with raw_col:
-    st.subheader("Raw text")
-    st.write(html_string)
+    with pretty_col:
+        st.subheader("Pretty text")
+        html_string = off_deets['summaries'][0]['text']
+        st.write(html_to_structured_text(html_string))
+    with raw_col:
+        st.subheader("Raw text")
+        st.write(html_string)
 
 
 

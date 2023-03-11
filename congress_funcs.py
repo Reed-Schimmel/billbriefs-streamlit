@@ -10,6 +10,9 @@ BILL_TYPES = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres']
 
 def validate_bill_id(bill_id=''):
     '''Takes ProPublica bill_id ex "sres21-118'''
+    if bill_id is None:
+        return False
+
     pattern = r'^(hr|s|hjres|sjres|hconres|sconres|hres|sres)(\d+)-(\d+)$'
     return bool(re.match(pattern, bill_id))
 
