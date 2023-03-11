@@ -36,14 +36,14 @@ if st.button("Go Back"):
     switch_page("Member_List")
 
 ############################## HERE YA GO #########################################
-st.write(st.session_state["selected_member"])
-'''
-Now what I must do is filter by positions that passed.
-Then by actual bills (not all votes are on bills).
-Then grab the summary or title/short title for each bill (hopefully already cached)
-I will display a list of "date, bill_id, position" then expand for text.
-
-'''
+with st.expander("Member JSON", expanded=False):
+    st.write(st.session_state["selected_member"])  
+# '''
+# Now what I must do is filter by positions that passed.
+# Then by actual bills (not all votes are on bills).
+# Then grab the summary or title/short title for each bill (hopefully already cached)
+# I will display a list of "date, bill_id, position" then expand for text.
+# '''
 st.subheader("Voting Positions by vote result")
 
 chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
@@ -66,29 +66,32 @@ bill_id = st.selectbox('bill_id', df['bill_id'].unique())
 
 #validate bill_id, must have the form <bill_type><bill_number>-<congress_number>
 
-
-st.subheader("ProPub details")
-bill_deets = get_bill(bill_id)
-if bill_deets is not None:
-    text_fields = ["title","short_title","summary","summary_short",]
-    for field in text_fields:
-        st.text(field)
-        st.write(bill_deets[field])
+with st.expander("ProPub details", expanded=False):
+    st.subheader("ProPub details")
+    bill_deets = get_bill(bill_id)
+    if bill_deets is not None:
+        text_fields = ["title","short_title","summary","summary_short",]
+        for field in text_fields:
+            st.text(field)
+            st.write(bill_deets[field])
 
 st.subheader("Official details")
 off_deets = get_bill_summaries_official(bill_id)
-# if off_deets is not None:
-#     # st.write(off_deets)
-#     text_data = off_deets['summaries'][0]['text']
-#     soup = BeautifulSoup(text_data, "html.parser")
-#     st.write(soup.get_text())
-#     st.write(text_data)
-st.caption("Pretty text")
-html_string = off_deets['summaries'][0]['text']
-st.write(html_to_structured_text(html_string))
+if len(off_deets['summaries']) > 1:
+    st.warning("multiple summaries")
+    with st.expander("Raw summaries list", expanded=False):
+        st.write(off_deets['summaries'])
+        # TODO: select by actionDesc or by actionDate(max)?
 
-st.caption("Raw text")
-st.write(html_string)
+pretty_col, raw_col = st.columns(2)
+
+with pretty_col:
+    st.subheader("Pretty text")
+    html_string = off_deets['summaries'][0]['text']
+    st.write(html_to_structured_text(html_string))
+with raw_col:
+    st.subheader("Raw text")
+    st.write(html_string)
 
 
 
