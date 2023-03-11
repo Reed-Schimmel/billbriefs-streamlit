@@ -20,6 +20,8 @@
 ## Notes
 - [Streamalit Secrets Docs](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management)
 - [Deta Base Docs](https://deta.space/docs/en/reference/base/sdk)
+- [OpenAI Prompt Design Docs](https://platform.openai.com/docs/guides/completion/introduction)
+    - [Summarization](https://platform.openai.com/docs/guides/completion/summarization)
 
 ## App Flow for voters
 1. User inputs address
@@ -38,3 +40,5 @@ Allow new candidates running for election to display how they would've voted for
 # Don't forget
 just like a download bill summaries and make them pretty, do that with full bill text.
 This will need to happen when we summarize entire bills ourselves.
+
+- `congress.utils.CongressError: {'message': 'Network error communicating with endpoint'}` https://github.com/Reed-Schimmel/propublica-congress/blob/master/congress/client.py
