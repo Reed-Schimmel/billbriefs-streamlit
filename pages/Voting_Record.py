@@ -1,10 +1,12 @@
 import pandas as pd
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
+from bs4 import BeautifulSoup
 
 from datetime import datetime#, timedelta
 
 from congress_funcs import build_voting_records, get_bill, get_bill_summaries_official, validate_bill_id
+from utils import html_to_structured_text
 from const import HOUSE, SENATE
 
 # Config webapp
@@ -58,7 +60,6 @@ with st.expander("Positions"):
 
 ###################
 
-
 st.header("Bill Summary")
 # st.write(df['bill_id'].unique())
 bill_id = st.selectbox('bill_id', df['bill_id'].unique())
@@ -76,11 +77,18 @@ if bill_deets is not None:
 
 st.subheader("Official details")
 off_deets = get_bill_summaries_official(bill_id)
-if off_deets is not None:
-    # st.write(off_deets)
-    st.write(off_deets['summaries'][0]['text'])
+# if off_deets is not None:
+#     # st.write(off_deets)
+#     text_data = off_deets['summaries'][0]['text']
+#     soup = BeautifulSoup(text_data, "html.parser")
+#     st.write(soup.get_text())
+#     st.write(text_data)
+st.caption("Pretty text")
+html_string = off_deets['summaries'][0]['text']
+st.write(html_to_structured_text(html_string))
 
-
+st.caption("Raw text")
+st.write(html_string)
 
 
 
