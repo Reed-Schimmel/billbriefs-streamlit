@@ -1,6 +1,8 @@
 streamlit
-git+https://github.com/Reed-Schimmel/propublica-congress # python-congress
+git+https://github.com/Reed-Schimmel/propublica-congress # ProPublica's python-congress
 deta
 streamlit-extras
 notebook
 bs4
+openai
+tiktoken # for counting tokens

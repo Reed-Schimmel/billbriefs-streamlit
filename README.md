@@ -5,7 +5,7 @@
 - [Google Civic Information API](https://developers.google.com/civic-information/docs/v2)
 - [Streamlit Extras](https://github.com/arnaudmiribel/streamlit-extras)
 - https://api.congress.gov/
-- https://github.com/unitedstates/congress
+- https://github.com/unitedstates/congress **Check this guy out!**
 ## Setup
 1. clone this repo
 1. cd in dir
@@ -22,7 +22,10 @@
 - [Deta Base Docs](https://deta.space/docs/en/reference/base/sdk)
 - [OpenAI Prompt Design Docs](https://platform.openai.com/docs/guides/completion/introduction)
     - [Summarization](https://platform.openai.com/docs/guides/completion/summarization)
-
+    - [Pricing](https://openai.com/pricing)
+- [OpenAI Cookbook](https://github.com/openai/openai-cookbook/)
+- https://discuss.streamlit.io/t/streamlit-components-community-tracker/4634
+    - epic https://github.com/thunderbug1/streamlit-javascript
 ## App Flow for voters
 1. User inputs address
 1. App gets applicable members
@@ -41,4 +44,6 @@ Allow new candidates running for election to display how they would've voted for
 just like a download bill summaries and make them pretty, do that with full bill text.
 This will need to happen when we summarize entire bills ourselves.
 
+## ERRORS
 - `congress.utils.CongressError: {'message': 'Network error communicating with endpoint'}` https://github.com/Reed-Schimmel/propublica-congress/blob/master/congress/client.py
+- `congress.utils.CongressError: {'status': '500', 'error': 'Internal Server Error'}`

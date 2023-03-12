@@ -98,11 +98,11 @@ if len(selected_positions) > 0:
         st.subheader("Raw text")
         st.write(html_string)
 
-st.markdown('---')
-import json
-if st.button("Save to file"):
-    with open(f'{chamber}_all_voting_positions_{df["date"].min()}_{df["date"].max()}.json', 'w') as f:
-        json.dump(all_voting_positions, f)
+# st.markdown('---')
+# import json
+# if st.button("Save to file"):
+#     with open(f'data/{chamber}_all_voting_positions_{df["date"].min()}_{df["date"].max()}.json', 'w') as f:
+#         json.dump(all_voting_positions, f)
 
 # {
 # "bill_id":"hr1123-118"

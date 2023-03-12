@@ -1,10 +1,14 @@
+# TODO: handling for https://github.com/Reed-Schimmel/propublica-congress/blob/master/congress/client.py
+# congress.utils.CongressError: {'message': 'Network error communicating with endpoint'}
 import re
 import requests
+import json
 
 import streamlit as st
 
-from congress import Congress
+from congress import Congress, CongressError
 from datetime import datetime, timedelta
+from const import HOUSE, SENATE
 
 BILL_TYPES = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres']
 
@@ -17,7 +21,7 @@ def validate_bill_id(bill_id=''):
     return bool(re.match(pattern, bill_id))
 
 
-@st.cache_resource(ttl=60*60) # Reconnect every 60 minutes
+@st.cache_resource#(ttl=60*60) # Reconnect every 60 minutes
 def get_congress_api():
     return Congress(st.secrets["PROPUBLICA_API_KEY"])
 
@@ -67,13 +71,17 @@ def process_votes_to_member_positions(votes_list, verbose=False):
         session        = vote_in_list['session']
         congress_n     = vote_in_list['congress']
 
-        vote_details = get_vote_details(
-            chamber      = chamber,
-            rollcall_num = rollcall_num,
-            session      = session,
-            congress     = congress_n,
-        )
-        
+        try:
+            vote_details = get_vote_details(
+                chamber      = chamber,
+                rollcall_num = rollcall_num,
+                session      = session,
+                congress     = congress_n,
+            )
+        except CongressError:
+            print(CongressError.message)
+            continue
+
         if "votes" in vote_details:
             if verbose:
                 print("number of votes in vote_details:", len(vote_details["votes"]))
@@ -108,7 +116,18 @@ def process_votes_to_member_positions(votes_list, verbose=False):
     return results
 
 @st.cache_data
-def build_voting_records(chamber, from_dt, to_dt = datetime.today()):
+def build_voting_records(chamber, from_dt, to_dt = datetime.today(), use_local=True): # TODO: change `use_local` to false and or remove completely
+    # TODO using local file is very temporary! Move to real solution later
+    if use_local:
+        if chamber == HOUSE:
+            filename = "data/house_all_voting_positions.json"
+        if chamber == SENATE:
+            filename = "data/senate_all_voting_positions.json"
+
+        with open(filename, 'r') as f:
+            all_voting_positions = json.load(f)
+        return all_voting_positions
+
     all_votes = get_votes_between(chamber, from_dt, to_dt)
     voting_positions_by_member = process_votes_to_member_positions(all_votes)
     return voting_positions_by_member
@@ -122,6 +141,31 @@ def get_bill(bill_id, type=None):
     bill, congress = bill_id.split('-')
     return get_congress_api().bills.get(bill, congress)
 
+
+# def get_official_bill_info(bill_id, info_type):
+#     '''Takes ProPublica bill_id ex "sres21-118"
+
+#     info_type = summaries | text
+
+#     https://api.congress.gov/#/bill
+#     '''
+#     if not validate_bill_id(bill_id):
+#         return None
+
+#     CONGRESS_API_KEY = st.secrets["CONGRESS_API_KEY"]
+
+#     bill, congress = bill_id.split('-')
+#     bill_type, bill_n = re.split('(\d+)', bill)[:2]
+
+#     url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/{info_type}?api_key={CONGRESS_API_KEY}"
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         json_data = response.json()
+#     else:
+#         print("Error retrieving bill summaries. Status code:", response.status_code)
+#     return json_data
+
+
 @st.cache_data
 def get_bill_summaries_official(bill_id):
     '''Takes ProPublica bill_id ex "sres21-118"
@@ -131,11 +175,33 @@ def get_bill_summaries_official(bill_id):
         return None
 
     CONGRESS_API_KEY = st.secrets["CONGRESS_API_KEY"]
+    # TODO: select a time for textVersion, be it specific or min/max
 
     bill, congress = bill_id.split('-')
     bill_type, bill_n = re.split('(\d+)', bill)[:2]
 
     url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/summaries?api_key={CONGRESS_API_KEY}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        json_data = response.json()
+    else:
+        print("Error retrieving bill summaries. Status code:", response.status_code)
+    return json_data
+
+def get_bill_text_official(bill_id): # https://colab.research.google.com/drive/1xdYRN16cOvYAOFayvTqc0n4N43ItA_dU#scrollTo=4_CBr5UFhWhW
+    '''
+    Takes ProPublica bill_id ex "sres21-118
+    https://api.congress.gov/#/bill/bill_text
+    '''
+    if not validate_bill_id(bill_id):
+        return None
+
+    CONGRESS_API_KEY = st.secrets["CONGRESS_API_KEY"]
+
+    bill, congress = bill_id.split('-')
+    bill_type, bill_n = re.split('(\d+)', bill)[:2]
+
+    url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_n}/text?api_key={CONGRESS_API_KEY}"
     response = requests.get(url)
     if response.status_code == 200:
         json_data = response.json()
