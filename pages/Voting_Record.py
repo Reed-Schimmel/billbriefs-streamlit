@@ -1,6 +1,11 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
+from datetime import datetime#, timedelta
+
+from congress_funcs import build_voting_records
+from const import HOUSE, SENATE
+
 # Config webapp
 st.set_page_config(
     page_title="BillBriefs",
@@ -31,5 +36,9 @@ if st.button("Go Back"):
 ############################## HERE YA GO #########################################
 st.write(st.session_state["selected_member"])
 
+st.subheader("All Voting Positions")
 
+chamber = SENATE if "Senator" in st.session_state["selected_member"]["title"] else HOUSE
+all_voting_positions = build_voting_records(chamber, datetime(2022, 5, 1, 0, 0, 0))
+st.write(all_voting_positions[st.session_state["selected_member"]['id']])
 

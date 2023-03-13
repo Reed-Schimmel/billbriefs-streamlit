@@ -1,4 +1,5 @@
 streamlit
-python-congress
+git+https://github.com/Reed-Schimmel/propublica-congress # python-congress
 deta
 streamlit-extras
+notebook
