@@ -79,7 +79,6 @@ def render_member(member):
 
 @st.cache_data
 def google_geocode_requests(search_address):
-    GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
     # Set the API endpoint URL and API key
     url = 'https://www.googleapis.com/civicinfo/v2/representatives'
@@ -101,20 +100,22 @@ def google_geocode_requests(search_address):
 def search_members(search_by, member):
     '''Returns True if search_by is in member's name, state name, or address'''
 
+    # If search_by is empty, return False
+    if not search_by:
+        return False
     # Search by name or state
     if search_by.lower() in (member['first_name'] + " " + member['last_name']).lower():
         return True
     elif search_by.lower() in [value.lower() for value in STATE_DICT.values()] and member["state"] in STATE_DICT.keys() and STATE_DICT[member["state"]].lower() == search_by.lower():
         return True
-
-    response_data = google_geocode_requests(search_by)
-    officials = response_data.get('officials', [])
-    if officials:
-        for official in officials:
-            if (member['first_name'].lower() in official['name'].lower()) and (member['last_name'].lower() in official['name'].lower()):
-                return True
-
-    return False
+    # Search by address
+    else:
+        response_data = google_geocode_requests(search_by)
+        officials = response_data.get('officials', [])
+        if officials:
+            for official in officials:
+                if (member['first_name'].lower() in official['name'].lower()) and (member['last_name'].lower() in official['name'].lower()):
+                    return True
 
 # WEBAPP
 
@@ -127,15 +128,9 @@ st.markdown("<h1 style='text-align: center;'>Welcome to BillBriefs!</h1>", unsaf
 st.markdown("---")
 
 #Use USPS API to autofilll address or suggest address
-search_by = st.text_input("**Find your Elected Officials**", placeholder="Search by name, state, or address.")
-
-st.markdown("<h2 style='text-align: center;'>Members</h2>", unsafe_allow_html=True)
-st.markdown("---")
+search_by = st.text_input("**Find your Elected Officials.**", placeholder="Search by Name, State, or Address.")
 
 senators_by_state = {}
-reps_by_state = {}
-
-
 # Loop for appending senators in session_state to senators_by_state (Sorted by State)
 for senator in st.session_state['senate_members']:
     if search_members(search_by, senator):
@@ -146,6 +141,7 @@ for senator in st.session_state['senate_members']:
                 senators_by_state[full_state_name] = []
             senators_by_state[full_state_name].append(senator)
 
+reps_by_state = {}
 # Loop for appending representatives in session_state to reps_by_state (Sorted by State)
 for rep in st.session_state['house_members']:
     if search_members(search_by, rep):
@@ -155,6 +151,11 @@ for rep in st.session_state['house_members']:
             if full_state_name not in reps_by_state:
                 reps_by_state[full_state_name] = []
             reps_by_state[full_state_name].append(rep)
+
+# If senators_by_state or reps_by_state is not empty, render Members header
+if senators_by_state or reps_by_state:
+    st.markdown("<h2 style='text-align: center;'>Members</h2>", unsafe_allow_html=True)
+    st.markdown("---")
 
 # Loop for rendering senators and representatives by state
 for state in sorted(set(senators_by_state.keys()) | set(reps_by_state.keys())):
