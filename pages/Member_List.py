@@ -193,5 +193,52 @@ for state in sorted(set(senators_by_state.keys()) | set(reps_by_state.keys())):
                 with col1:
                     render_member(rep)
                 
-
+footer="""
+<style>
+.footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #D3D3D3;
+    text-align: center;
+    font-size: 100%;
+    color: #000000;
+    padding: 1.5%;
+}
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.footer-left {
+    font-weight: bold;
+}
+.footer-center a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+}
+.footer-center a:hover {
+    opacity: 0.5;
+}
+.footer-right {
+    font-weight: bold;
+}
+</style>
+<div class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+        Copyright &copy; 2023 BillBriefs. All Rights Reserved.
+    </div>
+    <div class="footer-center">
+        <a href="https://sites.google.com/view/billbriefs/home">Visit our Website</a>
+    </div>
+    <div class="footer-right">
+        Data provided by ProPublica Congress API.
+    </div>
+  </div>
+</div>
+"""
+st.markdown(footer, unsafe_allow_html=True) 
 
