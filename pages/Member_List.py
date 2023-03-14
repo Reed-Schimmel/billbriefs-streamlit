@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import random
 from congress import Congress
 from datetime import datetime
 from streamlit_extras.switch_page_button import switch_page
@@ -116,6 +117,12 @@ def search_members(search_by, member):
             for official in officials:
                 if (member['first_name'].lower() in official['name'].lower()) and (member['last_name'].lower() in official['name'].lower()):
                     return True
+                
+def pick_random_member():
+    senate_members = st.session_state['senate_members']
+    house_members = st.session_state['house_members']
+    members = senate_members + house_members
+    return random.choice(members)
 
 # WEBAPP
 
@@ -129,6 +136,17 @@ st.markdown("---")
 
 #Use USPS API to autofilll address or suggest address
 search_by = st.text_input("**Find your Elected Officials.**", placeholder="Search by Name, State, or Address.")
+
+if st.button("I'm Feeling Lucky", use_container_width=True):
+    search_by = ""
+    random_member = pick_random_member()
+    state_abbreviation = random_member["state"]
+    state_name = STATE_DICT.get(state_abbreviation)
+    if state_name is not None:
+        with st.expander(f"**{state_name}**", True):
+            col1, col2 = st.columns(2)
+            with col1:
+                render_member(random_member)
 
 senators_by_state = {}
 # Loop for appending senators in session_state to senators_by_state (Sorted by State)
