@@ -144,8 +144,8 @@ if st.button("I'm Feeling Lucky", use_container_width=True):
     state_name = STATE_DICT.get(state_abbreviation)
     if state_name is not None:
         with st.expander(f"**{state_name}**", True):
-            col1, col2 = st.columns(2)
-            with col1:
+            col1, col2, col3 = st.columns(3)
+            with col2:
                 render_member(random_member)
 
 senators_by_state = {}
